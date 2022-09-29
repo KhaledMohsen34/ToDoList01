@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+        integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/001-styles.css">
+</head>
+
+<body onload="startList();">
+
+    <h1 align="center">To Do List</h1>
+    <br><br>
+    <div id="addNew" onclick="createItem();">+</div>
+
+    <div class="itemsList">
+        <div class="listHeader">
+            <div class="itemName">
+                Item Name
+                &nbsp; <i class='fa-solid fa-angles-up'></i> &nbsp; <i class='fa-solid fa-angles-down'></i>
+            </div>
+            <div class="itemDetails">
+                Item Details
+                &nbsp; <i class='fa-solid fa-angles-up'></i> &nbsp; <i class='fa-solid fa-angles-down'></i>
+            </div>
+            <div class="itemDate">
+                Item Date
+                &nbsp; <i class='fa-solid fa-angles-up'></i> &nbsp; <i class='fa-solid fa-angles-down'></i>
+            </div>
+            <div class="itemRate">
+                Item Rate
+                &nbsp; <i class='fa-solid fa-angles-up'></i> &nbsp; <i class='fa-solid fa-angles-down'></i>
+            </div>
+            <div class="operations">Delete / Update</div>
+        </div>
+    </div>
+
+
+    <!-- light screen -->
+    <div id="lightScreen"></div>
+    <!-- delete dialoug -->
+    <div id="deleteDialoug">
+        <h3>Do You want to Delete Item ?</h3>
+        <h3 id="deleteItemName"></h3>
+        <div id="deleteBts">
+            <div id="yesDelete" onclick="yesDelete();">Yes</div>
+            <div id="noDelete" onclick="noDelete();">No</div>
+        </div>
+    </div>
+
+    <!-- create dialoug -->
+    <div id="createDialoug">
+        <h3 style="text-align: center;">Create New Item</h3>
+        <div>
+            <label for="">Item Name</label>
+            <input type="text" id="itemName">
+        </div>
+        <div>
+            <label for="">Item Details</label>
+            <input type="text" id="itemDetails">
+        </div>
+        <div>
+            <label for="">Item Date</label>
+            <input type="date" id="itemDate">
+        </div>
+        <div>
+            <label for="">Item Rate</label><br>
+            <input type="radio" name="itemRate" value="1" checked><span>1</span>
+            <input type="radio" name="itemRate" value="2"><span>2</span>
+            <input type="radio" name="itemRate" value="3"><span>3</span>
+            <input type="radio" name="itemRate" value="4"><span>4</span>
+            <input type="radio" name="itemRate" value="5"><span>5</span>
+        </div>
+
+        <div id="newItemButtons">
+            <div id="saveNew" onclick="saveNew();">Save New Item</div>
+            <div id="cancelNew" onclick="cancelNew();">Cancel</div>
+        </div>
+    </div>
+
+
+    <!-- update dialoug -->
+    <div id="updateDialoug">
+        <h3 style="text-align: center;">Update Item</h3>
+        <div>
+            <label for="">Item Name</label>
+            <input type="text" id="updatedItemName">
+        </div>
+        <div>
+            <label for="">Item Details</label>
+            <input type="text" id="updatedItemDetails">
+        </div>
+        <div>
+            <label for="">Item Date</label>
+            <input type="date" id="updatedItemDate">
+        </div>
+        <div>
+            <label for="">Item Rate</label><br>
+            <input type="radio" name="updatedItemRate" value="1"><span>1</span>
+            <input type="radio" name="updatedItemRate" value="2"><span>2</span>
+            <input type="radio" name="updatedItemRate" value="3"><span>3</span>
+            <input type="radio" name="updatedItemRate" value="4"><span>4</span>
+            <input type="radio" name="updatedItemRate" value="5"><span>5</span>
+        </div>
+
+        <div id="newItemButtons">
+            <div id="updateItem" onclick="updateItem();">Update Item</div>
+            <div id="cancelUpdate" onclick="cancelUpdate();">Cancel</div>
+        </div>
+    </div>
+
+
+    <!-- star icon -->
+    <div style="display: none;">
+        <div id="starRate">
+            <i class="fa-solid fa-star"></i>
+        </div>
+    </div>
+
+
+    <script>
+        var items = [
+            {
+                itemName: "visit my sister",
+                itemDetails: "she ask me to visit her",
+                itemDate: "2022-09-17",
+                itemRate: "4"
+            },
+            {
+                itemName: "play football",
+                itemDetails: "play football with friends",
+                itemDate: "2022-09-19",
+                itemRate: "2"
+            },
+            {
+                itemName: "learn css",
+                itemDetails: "learn css from udimy course",
+                itemDate: "2022-09-22",
+                itemRate: "3"
+            },
+        ];
+
+        function startList() {
+            items.forEach(function (element, index) {
+                var oneRow = document.querySelector(".listHeader");
+                var newRow = oneRow.cloneNode(true);
+                newRow.querySelector(".itemName").innerText = element.itemName;
+                newRow.querySelector(".itemDetails").innerText = element.itemDetails;
+                newRow.querySelector(".itemDate").innerText = element.itemDate;
+
+                newRow.querySelector(".itemRate").innerText = "";
+                var oneStar = document.querySelector("#starRate").cloneNode(true);
+                for (var i = 0; i < parseInt(element.itemRate); i++) {
+                    newRow.querySelector(".itemRate").innerHTML += oneStar.innerHTML;
+                }
+
+                newRow.querySelector(".operations").innerHTML = "";
+                newRow.querySelector(".operations").innerHTML = "<i onclick='deleteItem(this);' class='fa-solid fa-trash-can'></i> &nbsp; <i class='fa-solid fa-pen-to-square' onclick='showUpdateDialoug(this);'></i>  &nbsp; <i class='fa-solid fa-angles-up'></i> &nbsp; <i class='fa-solid fa-angles-down'></i>";
+
+                document.querySelector(".itemsList").appendChild(newRow);
+
+            });
+        };
+
+        /* ******************** delete operation *************************************** */
+        var deletedRow;
+
+        function deleteItem(deleteIcon) {
+            document.querySelector("#lightScreen").style.display = "block";
+            document.querySelector("#deleteDialoug").style.display = "block";
+
+            var deleteItemName = deleteIcon.parentNode.parentNode.querySelector(".itemName").innerText;
+            document.querySelector("#deleteItemName").innerHTML = deleteItemName;
+
+            deletedRow = deleteIcon.parentNode.parentNode;
+        }
+        function noDelete() {
+            document.querySelector("#lightScreen").style.display = "none";
+            document.querySelector("#deleteDialoug").style.display = "none";
+        }
+        function yesDelete() {
+            deletedRow.remove();
+            noDelete();
+        }
+
+        /* *****************  create item ********************************************** */
+        function createItem() {
+            document.querySelector("#lightScreen").style.display = "block";
+            document.querySelector("#createDialoug").style.display = "block";
+        }
+        function cancelNew() {
+            document.querySelector("#lightScreen").style.display = "none";
+            document.querySelector("#createDialoug").style.display = "none";
+        }
+        function saveNew() {
+            var itemName = document.querySelector("#itemName").value;
+            var itemDetails = document.querySelector("#itemDetails").value;
+            var itemDate = document.querySelector("#itemDate").value;
+            var itemRate = document.querySelector("input[name='itemRate']:checked").value;
+
+            var oneRow = document.querySelector(".listHeader");
+            var newRow = oneRow.cloneNode(true);
+            newRow.querySelector(".itemName").innerText = itemName;
+            newRow.querySelector(".itemDetails").innerText = itemDetails;
+            newRow.querySelector(".itemDate").innerText = itemDate;
+
+            newRow.querySelector(".itemRate").innerText = "";
+            var oneStar = document.querySelector("#starRate").cloneNode(true);
+            for (var i = 0; i < parseInt(itemRate); i++) {
+                newRow.querySelector(".itemRate").innerHTML += oneStar.innerHTML;
+            }
+
+            newRow.querySelector(".operations").innerHTML = "";
+            newRow.querySelector(".operations").innerHTML = "<i onclick='deleteItem(this);' class='fa-solid fa-trash-can'></i> &nbsp; <i class='fa-solid fa-pen-to-square' onclick='showUpdateDialoug(this);'></i>  &nbsp; <i class='fa-solid fa-angles-up'></i> &nbsp; <i class='fa-solid fa-angles-down'></i>";
+
+            document.querySelector(".itemsList").appendChild(newRow);
+
+            cancelNew();
+        }
+
+
+        /* ******************* update **************************************** */
+        var updatedItem;
+
+        function showUpdateDialoug(updateIcon) {
+            updatedItem = updateIcon.parentNode.parentNode;
+
+            document.querySelector("#lightScreen").style.display = "block";
+            document.querySelector("#updateDialoug").style.display = "block";
+
+            document.querySelector("#updatedItemName").value = updatedItem.querySelector(".itemName").innerText;
+            document.querySelector("#updatedItemDetails").value = updatedItem.querySelector(".itemDetails").innerText;
+            document.querySelector("#updatedItemDate").value = updatedItem.querySelector(".itemDate").innerText;
+
+            /* rate */
+            var itemRate = updatedItem.querySelectorAll(".itemRate i").length;
+            var allRadios = document.querySelectorAll("#updateDialoug input[name='updatedItemRate']");
+            allRadios[itemRate - 1].checked = true;
+            /* ********** */
+
+        }
+
+        function cancelUpdate() {
+            document.querySelector("#lightScreen").style.display = "none";
+            document.querySelector("#updateDialoug").style.display = "none";
+        }
+
+        function updateItem() {
+            var itemName = document.querySelector("#updatedItemName").value;
+            var itemDetails = document.querySelector("#updatedItemDetails").value;
+            var itemDate = document.querySelector("#updatedItemDate").value;
+            var itemRate = document.querySelector("input[name='updatedItemRate']:checked").value;
+
+            updatedItem.querySelector(".itemName").innerText = itemName;
+            updatedItem.querySelector(".itemDetails").innerText = itemDetails;
+            updatedItem.querySelector(".itemDate").innerText = itemDate;
+            
+            var oneStar = document.querySelector("#starRate").cloneNode(true);
+            updatedItem.querySelector(".itemRate").innerHTML = "";
+            for (var i = 0; i < parseInt(itemRate); i++) {
+                updatedItem.querySelector(".itemRate").innerHTML += oneStar.innerHTML;
+            }
+
+            cancelUpdate();
+        }
+
+    </script>
+</body>
+
+</html>
